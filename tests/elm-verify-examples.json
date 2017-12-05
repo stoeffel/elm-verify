@@ -1,0 +1,11 @@
+{
+  "root": "../",
+  "tests": [
+    "Verify",
+    "Verify.Dict",
+    "Verify.List",
+    "Verify.Maybe",
+    "Verify.Set",
+    "Verify.String"
+  ]
+}
