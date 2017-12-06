@@ -10,7 +10,8 @@ Your model would maybe look like this:
 
 ```elm
     type alias Model =
-        { firstName : Maybe String
+        { id : Int
+        , firstName : Maybe String
         , lastName : Maybe String
 
         -- ...
@@ -23,7 +24,8 @@ So you define `ValidatedModel` like this:
 
 ```elm
     type alias ValidatedModel =
-        { firstName : String
+        { id : Int
+        , firstName : String
         , lastName : String
 
         -- ...
@@ -34,6 +36,7 @@ and you can verify this by using a `Json.Decode.Pipeline`-like api.
 
 ```elm
      Verify.ok ValidatedModel
+         |> keep .id
          |> verify .firstName (Maybe.Verify.isJust "error")
          |> verify .lastName (Maybe.Verify.isJust"error")
 ```
