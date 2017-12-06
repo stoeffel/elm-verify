@@ -34,6 +34,6 @@ and you can verify this by using a `Json.Decode.Pipeline`-like api.
 
 ```elm
      Verify.ok ValidatedModel
-         |> verify .firstName (Maybe.Verify.ifNothing "error")
-         |> verify .lastName (Maybe.Verify.ifNothing"error")
+         |> verify .firstName (Maybe.Verify.isJust "error")
+         |> verify .lastName (Maybe.Verify.isJust"error")
 ```

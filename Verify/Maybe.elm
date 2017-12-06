@@ -1,8 +1,8 @@
-module Verify.Maybe exposing (ifNothing)
+module Verify.Maybe exposing (isJust)
 
 {-| Functions to verify properties of a Maybe.
 
-@docs ifNothing
+@docs isJust
 
 -}
 
@@ -11,14 +11,14 @@ import Verify exposing (Validator)
 
 {-| Fails if a Maybe is Nothing.
 
-    ifNothing "error" Nothing
+    isJust "error" Nothing
     --> Err [ "error" ]
 
 
-    ifNothing "error" (Just 42)
+    isJust "error" (Just 42)
     --> Ok 42 -- It removes the wrapper as well!
 
 -}
-ifNothing : error -> Validator error (Maybe a) a
-ifNothing error =
+isJust : error -> Validator error (Maybe a) a
+isJust error =
     Result.fromMaybe [ error ]

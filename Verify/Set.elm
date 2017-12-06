@@ -1,8 +1,8 @@
-module Verify.Set exposing (ifEmpty)
+module Verify.Set exposing (notEmpty)
 
 {-| Functions to verify properties of a Set.
 
-@docs ifEmpty
+@docs notEmpty
 
 -}
 
@@ -14,15 +14,15 @@ import Verify exposing (Validator)
 
     import Set
 
-    ifEmpty "error" <| Set.empty
+    notEmpty "error" <| Set.empty
     --> Err [ "error" ]
 
-    ifEmpty "error" <| Set.fromList [ (1, 1) ]
+    notEmpty "error" <| Set.fromList [ (1, 1) ]
     --> Ok <| Set.fromList [ (1, 1) ]
 
 -}
-ifEmpty : error -> Validator error (Set a) (Set a)
-ifEmpty error input =
+notEmpty : error -> Validator error (Set a) (Set a)
+notEmpty error input =
     if Set.isEmpty input then
         Err [ error ]
     else

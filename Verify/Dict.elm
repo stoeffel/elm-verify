@@ -1,8 +1,8 @@
-module Verify.Dict exposing (ifEmpty)
+module Verify.Dict exposing (notEmpty)
 
 {-| Functions to verify properties of a Dict.
 
-@docs ifEmpty
+@docs notEmpty
 
 -}
 
@@ -14,15 +14,15 @@ import Verify exposing (Validator)
 
     import Dict
 
-    ifEmpty "error" <| Dict.empty
+    notEmpty "error" <| Dict.empty
     --> Err [ "error" ]
 
-    ifEmpty "error" <| Dict.fromList [ (1, 1) ]
+    notEmpty "error" <| Dict.fromList [ (1, 1) ]
     --> Ok <| Dict.fromList [ (1, 1) ]
 
 -}
-ifEmpty : error -> Validator error (Dict a b) (Dict a b)
-ifEmpty error input =
+notEmpty : error -> Validator error (Dict a b) (Dict a b)
+notEmpty error input =
     if Dict.isEmpty input then
         Err [ error ]
     else

@@ -1,8 +1,8 @@
-module Verify.List exposing (ifEmpty)
+module Verify.List exposing (notEmpty)
 
 {-| Functions to verify properties of a List.
 
-@docs ifEmpty
+@docs notEmpty
 
 -}
 
@@ -11,15 +11,15 @@ import Verify exposing (Validator)
 
 {-| Fails if a List is empty.
 
-    ifEmpty "error" []
+    notEmpty "error" []
     --> Err [ "error" ]
 
-    ifEmpty "error" [1]
+    notEmpty "error" [1]
     --> Ok [1]
 
 -}
-ifEmpty : error -> Validator error (List a) (List a)
-ifEmpty error input =
+notEmpty : error -> Validator error (List a) (List a)
+notEmpty error input =
     case input of
         [] ->
             Err [ error ]
