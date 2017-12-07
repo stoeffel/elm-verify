@@ -7,11 +7,12 @@ module Verify
         , keep
         , ok
         , verify
+        , when
         )
 
 {-| Verify allows you to validate a model into a structure that makes forbidden states impossible.
 
-@docs Validator, ok, fail, verify, keep, custom, andThen
+@docs Validator, ok, fail, verify, keep, custom, andThen, when
 
 -}
 
@@ -184,3 +185,28 @@ andThen :
     -> Validator error input finally
 andThen v2 v1 =
     v1 >> Result.andThen v2
+
+
+{-| Fails if a predicate is False.
+
+    when hasInitial "error" ""
+    --> Err [ "error" ]
+
+    when hasInitial "error" "Christoph"
+    --> Ok 'C'
+
+    hasInitial : String -> Maybe Char
+    hasInitial str =
+        case String.uncons str of
+            Just (initial, _) -> Just initial
+            Nothing -> Nothing
+
+-}
+when : (input -> Maybe result) -> error -> Validator error input result
+when f error input =
+    case f input of
+        Nothing ->
+            Err [ error ]
+
+        Just result ->
+            Ok result
