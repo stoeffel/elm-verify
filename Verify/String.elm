@@ -1,8 +1,8 @@
-module Verify.String exposing (maxLength, minLength, notBlank)
+module Verify.String exposing (isInt, maxLength, minLength, notBlank)
 
 {-| Functions to verify properties of a String.
 
-@docs notBlank, minLength, maxLength
+@docs notBlank, minLength, maxLength, isInt
 
 -}
 
@@ -61,3 +61,17 @@ maxLength max error input =
         Ok input
     else
         Err [ error ]
+
+
+{-| Fails if a String is not an Int. It will return the Int in the result.
+
+    isInt "error" "a"
+    --> Err [ "error" ]
+
+    isInt "error" "42"
+    --> Ok 42
+
+-}
+isInt : error -> Validator error String Int
+isInt error =
+    Result.mapError (always [ error ]) << String.toInt
