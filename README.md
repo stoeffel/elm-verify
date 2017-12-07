@@ -18,12 +18,12 @@ Your model would maybe look like this:
         }
 ```
 
-Your submit function would be: `submit : ValidatedModel -> Cmd msg -- not Model`
+Your submit function would be: `submit : VerifiedModel -> Cmd msg -- not Model`
 
-So you define `ValidatedModel` like this:
+So you define `VerifiedModel` like this:
 
 ```elm
-    type alias ValidatedModel =
+    type alias VerifiedModel =
         { id : Int
         , firstName : String
         , lastName : String
@@ -35,7 +35,7 @@ So you define `ValidatedModel` like this:
 and you can verify this by using a `Json.Decode.Pipeline`-like api.
 
 ```elm
-     Verify.ok ValidatedModel
+     Verify.ok VerifiedModel
          |> keep .id
          |> verify .firstName (Maybe.Verify.isJust "error")
          |> verify .lastName (Maybe.Verify.isJust"error")
