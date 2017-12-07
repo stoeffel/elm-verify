@@ -1,4 +1,4 @@
-module Verify.List exposing (notEmpty)
+module List.Verify exposing (notEmpty)
 
 {-| Functions to verify properties of a List.
 

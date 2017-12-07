@@ -1,4 +1,4 @@
-module Verify.Dict exposing (notEmpty)
+module Dict.Verify exposing (notEmpty)
 
 {-| Functions to verify properties of a Dict.
 

@@ -1,4 +1,4 @@
-module Verify.Maybe exposing (isJust)
+module Maybe.Verify exposing (isJust)
 
 {-| Functions to verify properties of a Maybe.
 

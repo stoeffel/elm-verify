@@ -53,7 +53,7 @@ fail error _ =
 
 {-| Allows you to verify a part of a structure.
 
-    import Verify.Maybe exposing (isJust)
+    import Maybe.Verify exposing (isJust)
 
 
     validator : Validator String { a | firstName : Maybe String } String
@@ -79,7 +79,7 @@ verify f v1 v2 =
 
 {-| You can use `keep` if you want a value to be in the verified structure without any verification.
 
-    import Verify.Maybe exposing (isJust)
+    import Maybe.Verify exposing (isJust)
 
 
     validator : Validator String { a | id : Int, firstName : Maybe String } (Int, String)
@@ -107,7 +107,7 @@ keep f v =
 {-| Sometimes the verification of a part only makes sense in a bigger context.
 This means your Validator needs access to the whole structure.
 
-    import Verify.Maybe exposing (isJust)
+    import Maybe.Verify exposing (isJust)
 
 
     validator : Validator String { a | username : Maybe String, level: Int, strength: Int } (String, Int)
@@ -155,8 +155,8 @@ custom v2 v1 input =
 
 {-| This allows you to combine multible Validators.
 
-    import Verify.Maybe exposing (isJust)
-    import Verify.String exposing (notBlank)
+    import Maybe.Verify exposing (isJust)
+    import String.Verify exposing (notBlank)
 
 
     validator { firstName = Nothing }

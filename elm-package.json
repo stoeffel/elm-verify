@@ -8,11 +8,11 @@
     ],
     "exposed-modules": [
       "Verify",
-      "Verify.Dict",
-      "Verify.List",
-      "Verify.Maybe",
-      "Verify.Set",
-      "Verify.String"
+      "Dict.Verify",
+      "List.Verify",
+      "Maybe.Verify",
+      "Set.Verify",
+      "String.Verify"
     ],
     "dependencies": {
         "elm-lang/core": "5.0.0 <= v < 6.0.0"

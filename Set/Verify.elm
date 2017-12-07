@@ -1,4 +1,4 @@
-module Verify.Set exposing (notEmpty)
+module Set.Verify exposing (notEmpty)
 
 {-| Functions to verify properties of a Set.
 

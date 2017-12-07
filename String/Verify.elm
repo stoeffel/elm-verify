@@ -1,4 +1,4 @@
-module Verify.String exposing (isInt, maxLength, minLength, notBlank)
+module String.Verify exposing (isInt, maxLength, minLength, notBlank)
 
 {-| Functions to verify properties of a String.
 
