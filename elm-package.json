@@ -1,5 +1,5 @@
 {
-    "version": "1.0.0",
+    "version": "2.0.0",
     "summary": "Validate a model into a structure that makes forbidden states impossible.",
     "repository": "https://github.com/stoeffel/elm-verify.git",
     "license": "BSD-3-Clause",
@@ -7,12 +7,12 @@
         "."
     ],
     "exposed-modules": [
-      "Verify",
-      "Dict.Verify",
-      "List.Verify",
-      "Maybe.Verify",
-      "Set.Verify",
-      "String.Verify"
+        "Verify",
+        "Dict.Verify",
+        "List.Verify",
+        "Maybe.Verify",
+        "Set.Verify",
+        "String.Verify"
     ],
     "dependencies": {
         "elm-lang/core": "5.0.0 <= v < 6.0.0"
