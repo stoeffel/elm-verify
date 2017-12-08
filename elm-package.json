@@ -1,5 +1,5 @@
 {
-    "version": "2.0.1",
+    "version": "3.0.0",
     "summary": "Validate a model into a structure that makes forbidden states impossible.",
     "repository": "https://github.com/stoeffel/elm-verify.git",
     "license": "BSD-3-Clause",
