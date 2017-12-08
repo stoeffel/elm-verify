@@ -4,15 +4,15 @@ module Verify
         , andThen
         , custom
         , fail
+        , fromMaybe
         , keep
         , ok
         , verify
-        , when
         )
 
 {-| Verify allows you to validate a model into a structure that makes forbidden states impossible.
 
-@docs Validator, ok, fail, verify, keep, custom, andThen, when
+@docs Validator, ok, fail, verify, keep, custom, andThen, fromMaybe
 
 -}
 
@@ -187,12 +187,14 @@ andThen v2 v1 =
     v1 >> Result.andThen v2
 
 
-{-| Fails if a predicate is False.
+{-| This is a convenient function to create a `Validator` from a function that returns a maybe instead of a `Result`.
+It fails if the function returns a Nothing.
+This allows you to verify a input and return a result of a different type.
 
-    when hasInitial "error" ""
+    fromMaybe hasInitial "error" ""
     --> Err [ "error" ]
 
-    when hasInitial "error" "Christoph"
+    fromMaybe hasInitial "error" "Christoph"
     --> Ok 'C'
 
     hasInitial : String -> Maybe Char
@@ -202,11 +204,6 @@ andThen v2 v1 =
             Nothing -> Nothing
 
 -}
-when : (input -> Maybe result) -> error -> Validator error input result
-when f error input =
-    case f input of
-        Nothing ->
-            Err [ error ]
-
-        Just result ->
-            Ok result
+fromMaybe : (input -> Maybe result) -> error -> Validator error input result
+fromMaybe f error =
+    f >> Result.fromMaybe [ error ]
