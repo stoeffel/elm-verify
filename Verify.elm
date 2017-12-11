@@ -21,11 +21,11 @@ module Verify
 The result is either:
 
   - contains a list of all errors that didn't satisfy the given spec.
-  - contains an resulting structure.
+  - contains an verified structure.
 
 -}
-type alias Validator error input result =
-    input -> Result (List error) result
+type alias Validator error input verified =
+    input -> Result (List error) verified
 
 
 {-| This allows you to lift any value into a validator.
@@ -46,7 +46,7 @@ ok f _ =
     --> Err [ "always fail" ]
 
 -}
-fail : error -> Validator error input result
+fail : error -> Validator error input verified
 fail error _ =
     Err [ error ]
 
@@ -70,8 +70,8 @@ fail error _ =
 -}
 verify :
     (bigger -> smaller)
-    -> Validator error smaller result
-    -> Validator error bigger (result -> finally)
+    -> Validator error smaller verified
+    -> Validator error bigger (verified -> finally)
     -> Validator error bigger finally
 verify f v1 v2 =
     v2 |> custom (f >> v1)
@@ -135,8 +135,8 @@ This means your Validator needs access to the whole structure.
 
 -}
 custom :
-    Validator error input result
-    -> Validator error input (result -> finally)
+    Validator error input verified
+    -> Validator error input (verified -> finally)
     -> Validator error input finally
 custom v2 v1 input =
     case ( v1 input, v2 input ) of
@@ -180,8 +180,8 @@ custom v2 v1 input =
 
 -}
 andThen :
-    Validator error result finally
-    -> Validator error input result
+    Validator error verified finally
+    -> Validator error input verified
     -> Validator error input finally
 andThen v2 v1 =
     v1 >> Result.andThen v2
@@ -189,7 +189,7 @@ andThen v2 v1 =
 
 {-| This is a convenient function to create a `Validator` from a function that returns a maybe instead of a `Result`.
 It fails if the function returns a Nothing.
-This allows you to verify a input and return a result of a different type.
+This allows you to verify a input and return a verified result of a different type.
 
     fromMaybe hasInitial "error" ""
     --> Err [ "error" ]
@@ -204,6 +204,6 @@ This allows you to verify a input and return a result of a different type.
             Nothing -> Nothing
 
 -}
-fromMaybe : (input -> Maybe result) -> error -> Validator error input result
+fromMaybe : (input -> Maybe verified) -> error -> Validator error input verified
 fromMaybe f error =
     f >> Result.fromMaybe [ error ]
