@@ -7,12 +7,13 @@ module Verify
         , fromMaybe
         , keep
         , ok
+        , validate
         , verify
         )
 
 {-| Verify allows you to validate a model into a structure that makes forbidden states impossible.
 
-@docs Validator, ok, fail, verify, keep, custom, andThen, fromMaybe
+@docs Validator, ok, fail, validate, verify, keep, custom, andThen, fromMaybe
 
 -}
 
@@ -51,6 +52,32 @@ fail error _ =
     Err [ error ]
 
 
+{-| Allows you to start a validation pipeline. It is a synonym for `Verify.ok`, intended to make
+things clearer to read.
+
+    type alias User =
+        { id : Int
+        , name : String
+        }
+
+    validator : Validator String { a | id : Int, firstName : Maybe String } User
+    validator =
+        validate User
+            |> keep .id
+            |> verify .firstName (isJust "You need to provide a first name.")
+
+    validator { firstName = Nothing }
+    --> Err [ "You need to provide a first name." ]
+
+    validator { id = 1, firstName = Just "Stöffel" }
+    --> Ok { id = 1, firstName = "Stöffel" }
+
+-}
+validate : finally -> Validator error input finally
+validate =
+    ok
+
+
 {-| Allows you to verify a part of a structure.
 
     import Maybe.Verify exposing (isJust)
@@ -58,7 +85,7 @@ fail error _ =
 
     validator : Validator String { a | firstName : Maybe String } String
     validator =
-        Verify.ok identity
+        validate identity
             |> verify .firstName (isJust "You need to provide a first name.")
 
     validator { firstName = Nothing }
@@ -84,7 +111,7 @@ verify f v1 v2 =
 
     validator : Validator String { a | id : Int, firstName : Maybe String } (Int, String)
     validator =
-        Verify.ok (,)
+        validate (,)
             |> keep .id
             |> verify .firstName (isJust "You need to provide a first name.")
 
@@ -112,7 +139,7 @@ This means your Validator needs access to the whole structure.
 
     validator : Validator String { a | username : Maybe String, level: Int, strength: Int } (String, Int)
     validator =
-        Verify.ok (,)
+        validate (,)
             |> verify .username (isJust "You need to provide a username.")
             |> custom (\{level, strength} ->
                 if strength > level then
@@ -170,7 +197,7 @@ custom v2 v1 input =
 
     validator : Validator String { a | firstName : Maybe String } String
     validator =
-        Verify.ok identity
+        validate identity
             |> verify .firstName verifyName
 
     verifyName : Validator String (Maybe String) String
