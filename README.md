@@ -37,7 +37,7 @@ and you can verify this by using a `Json.Decode.Pipeline`-like api.
 ```elm
      validator : Validator String Model VerifiedModel
      validator =
-        Verify.ok VerifiedModel
+        validate VerifiedModel
             |> keep .id
             |> verify .firstName (Maybe.Verify.isJust "no first name")
             |> verify .lastName (Maybe.Verify.isJust"no last name")
