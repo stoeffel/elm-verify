@@ -1,7 +1,7 @@
 module Verify
     exposing
         ( Validator
-        , andThen
+        , compose
         , custom
         , fail
         , fromMaybe
@@ -13,7 +13,7 @@ module Verify
 
 {-| Verify allows you to validate a model into a structure that makes forbidden states impossible.
 
-@docs Validator, ok, fail, validate, verify, keep, custom, andThen, fromMaybe
+@docs Validator, ok, fail, validate, verify, keep, custom, compose, fromMaybe
 
 -}
 
@@ -180,7 +180,7 @@ custom v2 v1 input =
             Err e2
 
 
-{-| This allows you to combine multible Validators.
+{-| This allows you to compose multible Validators.
 
     import Maybe.Verify exposing (isJust)
     import String.Verify exposing (notBlank)
@@ -203,14 +203,14 @@ custom v2 v1 input =
     verifyName : Validator String (Maybe String) String
     verifyName =
         isJust "You need to provide a first name."
-            |> andThen (notBlank "You need to provide a none empty first name.")
+            |> compose (notBlank "You need to provide a none empty first name.")
 
 -}
-andThen :
+compose :
     Validator error verified finally
     -> Validator error input verified
     -> Validator error input finally
-andThen v2 v1 =
+compose v2 v1 =
     v1 >> Result.andThen v2
 
 
