@@ -2,6 +2,7 @@ module Verify
     exposing
         ( Validator
         , andThen
+        , compose
         , custom
         , fail
         , fromMaybe
@@ -13,7 +14,7 @@ module Verify
 
 {-| Verify allows you to validate a model into a structure that makes forbidden states impossible.
 
-@docs Validator, ok, fail, validate, verify, keep, custom, andThen, fromMaybe
+@docs Validator, ok, fail, validate, verify, keep, custom, compose, andThen, fromMaybe
 
 -}
 
@@ -55,9 +56,12 @@ fail error _ =
 {-| Allows you to start a validation pipeline. It is a synonym for `Verify.ok`, intended to make
 things clearer to read.
 
+    import Maybe.Verify exposing (isJust)
+
+
     type alias User =
         { id : Int
-        , name : String
+        , firstName : String
         }
 
     validator : Validator String { a | id : Int, firstName : Maybe String } User
@@ -66,7 +70,7 @@ things clearer to read.
             |> keep .id
             |> verify .firstName (isJust "You need to provide a first name.")
 
-    validator { firstName = Nothing }
+    validator { id = 1, firstName = Nothing }
     --> Err [ "You need to provide a first name." ]
 
     validator { id = 1, firstName = Just "Stöffel" }
@@ -180,7 +184,7 @@ custom v2 v1 input =
             Err e2
 
 
-{-| This allows you to combine multible Validators.
+{-| This allows you to compose multiple Validators.
 
     import Maybe.Verify exposing (isJust)
     import String.Verify exposing (notBlank)
@@ -203,15 +207,59 @@ custom v2 v1 input =
     verifyName : Validator String (Maybe String) String
     verifyName =
         isJust "You need to provide a first name."
-            |> andThen (notBlank "You need to provide a none empty first name.")
+            |> compose (notBlank "You need to provide a none empty first name.")
 
 -}
-andThen :
+compose :
     Validator error verified finally
     -> Validator error input verified
     -> Validator error input finally
-andThen v2 v1 =
+compose v2 v1 =
     v1 >> Result.andThen v2
+
+
+{-| This allows you to chain multiple Validators.
+
+    import Maybe.Verify exposing (isJust)
+
+
+    validator { firstName = Nothing }
+    --> Err [ "You need to provide a first name." ]
+
+    validator { firstName = Just "   " }
+    --> Err [  "Name is too short" ]
+
+    validator { firstName = Just "Stöffel" }
+    --> Ok "Stöffel"
+
+    validator : Validator String { a | firstName : Maybe String } String
+    validator =
+        validate identity
+            |> verify .firstName verifyName
+
+    verifyName : Validator String (Maybe String) String
+    verifyName =
+        isJust "You need to provide a first name."
+            |> andThen (\name ->
+                if String.length name > 5 then
+                    ok name
+                else
+                    fail "Name is too short"
+            )
+
+-}
+andThen :
+    (a -> Validator error input b)
+    -> Validator error input a
+    -> Validator error input b
+andThen f v =
+    \input ->
+        case v input of
+            Err e ->
+                Err e
+
+            Ok verified ->
+                f verified input
 
 
 {-| This is a convenient function to create a `Validator` from a function that returns a maybe instead of a `Result`.
