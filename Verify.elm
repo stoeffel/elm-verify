@@ -1,6 +1,7 @@
 module Verify
     exposing
         ( Validator
+        , andThen
         , compose
         , custom
         , fail
@@ -13,7 +14,7 @@ module Verify
 
 {-| Verify allows you to validate a model into a structure that makes forbidden states impossible.
 
-@docs Validator, ok, fail, validate, verify, keep, custom, compose, fromMaybe
+@docs Validator, ok, fail, validate, verify, keep, custom, compose, andThen, fromMaybe
 
 -}
 
@@ -212,6 +213,50 @@ compose :
     -> Validator error input finally
 compose v2 v1 =
     v1 >> Result.andThen v2
+
+
+{-| This allows you to chain multible Validators.
+
+    import Maybe.Verify exposing (isJust)
+
+
+    validator { firstName = Nothing }
+    --> Err [ "You need to provide a first name." ]
+
+    validator { firstName = Just "   " }
+    --> Err [  "Name is too short" ]
+
+    validator { firstName = Just "Stöffel" }
+    --> Ok "Stöffel"
+
+    validator : Validator String { a | firstName : Maybe String } String
+    validator =
+        validate identity
+            |> verify .firstName verifyName
+
+    verifyName : Validator String (Maybe String) String
+    verifyName =
+        isJust "You need to provide a first name."
+            |> andThen (\name ->
+                if String.length name > 5 then
+                    ok name
+                else
+                    fail "Name is too short"
+            )
+
+-}
+andThen :
+    (a -> Validator error input b)
+    -> Validator error input a
+    -> Validator error input b
+andThen f v =
+    \input ->
+        case v input of
+            Err e ->
+                Err e
+
+            Ok verified ->
+                f verified input
 
 
 {-| This is a convenient function to create a `Validator` from a function that returns a maybe instead of a `Result`.
