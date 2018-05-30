@@ -184,7 +184,7 @@ custom v2 v1 input =
             Err e2
 
 
-{-| This allows you to compose multible Validators.
+{-| This allows you to compose multiple Validators.
 
     import Maybe.Verify exposing (isJust)
     import String.Verify exposing (notBlank)
@@ -218,7 +218,7 @@ compose v2 v1 =
     v1 >> Result.andThen v2
 
 
-{-| This allows you to chain multible Validators.
+{-| This allows you to chain multiple Validators.
 
     import Maybe.Verify exposing (isJust)
 
