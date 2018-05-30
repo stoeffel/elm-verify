@@ -56,9 +56,12 @@ fail error _ =
 {-| Allows you to start a validation pipeline. It is a synonym for `Verify.ok`, intended to make
 things clearer to read.
 
+    import Maybe.Verify exposing (isJust)
+
+
     type alias User =
         { id : Int
-        , name : String
+        , firstName : String
         }
 
     validator : Validator String { a | id : Int, firstName : Maybe String } User
@@ -67,7 +70,7 @@ things clearer to read.
             |> keep .id
             |> verify .firstName (isJust "You need to provide a first name.")
 
-    validator { firstName = Nothing }
+    validator { id = 1, firstName = Nothing }
     --> Err [ "You need to provide a first name." ]
 
     validator { id = 1, firstName = Just "Stöffel" }
