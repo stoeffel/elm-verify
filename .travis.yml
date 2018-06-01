@@ -26,5 +26,5 @@ install:
   - elm-package install --yes
 
 script:
-  - elm-format --validate .
+  - elm-format --validate src
   - elm-verify-examples
