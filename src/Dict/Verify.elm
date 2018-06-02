@@ -25,5 +25,6 @@ notEmpty : error -> Validator error (Dict a b) (Dict a b)
 notEmpty error input =
     if Dict.isEmpty input then
         Err [ error ]
+
     else
         Ok input

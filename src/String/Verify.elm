@@ -18,15 +18,22 @@ import Verify exposing (Validator)
 -}
 notBlank : error -> Validator error String String
 notBlank error input =
-    if Regex.contains lacksNonWhitespaceChars input then
-        Err [ error ]
-    else
-        Ok input
+    case lacksNonWhitespaceChars of
+        Nothing ->
+            -- This is impossible because regex is correct
+            Err [ error ]
+
+        Just regex ->
+            if Regex.contains regex input then
+                Err [ error ]
+
+            else
+                Ok input
 
 
-lacksNonWhitespaceChars : Regex
+lacksNonWhitespaceChars : Maybe Regex
 lacksNonWhitespaceChars =
-    Regex.regex "^\\s*$"
+    Regex.fromString "^\\s*$"
 
 
 {-| Fails if a String is smaller than a given minimum.
@@ -42,6 +49,7 @@ minLength : Int -> error -> Validator error String String
 minLength min error input =
     if String.length input >= min then
         Ok input
+
     else
         Err [ error ]
 
@@ -59,6 +67,7 @@ maxLength : Int -> error -> Validator error String String
 maxLength max error input =
     if String.length input <= max then
         Ok input
+
     else
         Err [ error ]
 
@@ -74,4 +83,4 @@ maxLength max error input =
 -}
 isInt : error -> Validator error String Int
 isInt error =
-    Result.mapError (always [ error ]) << String.toInt
+    String.toInt >> Result.fromMaybe [ error ]
