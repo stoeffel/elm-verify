@@ -242,9 +242,9 @@ compose v2 v1 =
         isJust "You need to provide a first name."
             |> andThen (\name ->
                 if String.length name > 5 then
-                    ok name
+                    Ok name
                 else
-                    fail "Name is too short"
+                    Err "Name is too short"
             )
 
 -}
