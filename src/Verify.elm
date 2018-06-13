@@ -56,7 +56,7 @@ fail error _ =
 {-| Allows you to start a validation pipeline. It is a synonym for `Verify.ok`, intended to make
 things clearer to read.
 
-    import Maybe.Verify exposing (isJust)
+    import Maybe.Verify
 
 
     type alias User =
@@ -64,11 +64,11 @@ things clearer to read.
         , firstName : String
         }
 
-    validator : Validator String { a | id : Int, firstName : Maybe String } User
+    validator : Verify.Validator String { a | id : Int, firstName : Maybe String } User
     validator =
-        validate User
-            |> keep .id
-            |> verify .firstName (isJust "You need to provide a first name.")
+        Verify.validate User
+            |> Verify.keep .id
+            |> Verify.verify .firstName (Maybe.Verify.isJust "You need to provide a first name.")
 
     validator { id = 1, firstName = Nothing }
     --> Err [ "You need to provide a first name." ]
@@ -84,13 +84,13 @@ validate =
 
 {-| Allows you to verify a part of a structure.
 
-    import Maybe.Verify exposing (isJust)
+    import Maybe.Verify
 
 
-    validator : Validator String { a | firstName : Maybe String } String
+    validator : Verify.Validator String { a | firstName : Maybe String } String
     validator =
-        validate identity
-            |> verify .firstName (isJust "You need to provide a first name.")
+        Verify.validate identity
+            |> Verify.verify .firstName (Maybe.Verify.isJust "You need to provide a first name.")
 
     validator { firstName = Nothing }
     --> Err [ "You need to provide a first name." ]
@@ -110,14 +110,14 @@ verify f v1 v2 =
 
 {-| You can use `keep` if you want a value to be in the verified structure without any verification.
 
-    import Maybe.Verify exposing (isJust)
+    import Maybe.Verify
 
 
     validator : Validator String { a | id : Int, firstName : Maybe String } (Int, String)
     validator =
-        validate (,)
-            |> keep .id
-            |> verify .firstName (isJust "You need to provide a first name.")
+        Verify.validate (,)
+            |> Verify.keep .id
+            |> Verify.verify .firstName (Maybe.Verify.isJust "You need to provide a first name.")
 
 
     validator { id = 1, firstName = Nothing }
@@ -138,14 +138,14 @@ keep f v =
 {-| Sometimes the verification of a part only makes sense in a bigger context.
 This means your Validator needs access to the whole structure.
 
-    import Maybe.Verify exposing (isJust)
+    import Maybe.Verify
 
 
-    validator : Validator String { a | username : Maybe String, level: Int, strength: Int } (String, Int)
+    validator : Verify.Validator String { a | username : Maybe String, level: Int, strength: Int } (String, Int)
     validator =
-        validate (,)
-            |> verify .username (isJust "You need to provide a username.")
-            |> custom (\{level, strength} ->
+        Verify.validate (,)
+            |> Verify.verify .username (Maybe.Verify.isJust "You need to provide a username.")
+            |> Verify.custom (\{level, strength} ->
                 if strength > level then
                     Err [ "Your strength can exceed your level." ]
                 else
@@ -186,8 +186,8 @@ custom v2 v1 input =
 
 {-| This allows you to compose multiple Validators.
 
-    import Maybe.Verify exposing (isJust)
-    import String.Verify exposing (notBlank)
+    import Maybe.Verify
+    import String.Verify
 
 
     validator { firstName = Nothing }
@@ -199,15 +199,15 @@ custom v2 v1 input =
     validator { firstName = Just "Stöffel" }
     --> Ok "Stöffel"
 
-    validator : Validator String { a | firstName : Maybe String } String
+    validator : Verify.Validator String { a | firstName : Maybe String } String
     validator =
-        validate identity
-            |> verify .firstName verifyName
+        Verify.validate identity
+            |> Verify.verify .firstName verifyName
 
-    verifyName : Validator String (Maybe String) String
+    verifyName : Verify.Validator String (Maybe String) String
     verifyName =
-        isJust "You need to provide a first name."
-            |> compose (notBlank "You need to provide a none empty first name.")
+        Maybe.Verify.isJust "You need to provide a first name."
+            |> Verify.compose (String.Verify.notBlank "You need to provide a none empty first name.")
 
 -}
 compose :
@@ -220,7 +220,7 @@ compose v2 v1 =
 
 {-| This allows you to chain multiple Validators.
 
-    import Maybe.Verify exposing (isJust)
+    import Maybe.Verify
 
 
     validator { firstName = Nothing }
@@ -232,19 +232,19 @@ compose v2 v1 =
     validator { firstName = Just "Stöffel" }
     --> Ok "Stöffel"
 
-    validator : Validator String { a | firstName : Maybe String } String
+    validator : Verify.Validator String { a | firstName : Maybe String } String
     validator =
-        validate identity
-            |> verify .firstName verifyName
+        Verify.validate identity
+            |> Verify.verify .firstName verifyName
 
-    verifyName : Validator String (Maybe String) String
+    verifyName : Verify.Validator String (Maybe String) String
     verifyName =
-        isJust "You need to provide a first name."
-            |> andThen (\name ->
+        Maybe.Verify.isJust "You need to provide a first name."
+            |> Verify.andThen (\name ->
                 if String.length name > 5 then
-                    ok name
+                    Verify.ok name
                 else
-                    fail "Name is too short"
+                    Verify.fail "Name is too short"
             )
 
 -}
