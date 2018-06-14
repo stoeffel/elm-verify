@@ -15,7 +15,7 @@ import Verify exposing (Validator)
     import Set
 
     notEmpty "error" <| Set.empty
-    --> Err [ "error" ]
+    --> Err ( "error" , [])
 
     notEmpty "error" <| Set.fromList [ (1, 1) ]
     --> Ok <| Set.fromList [ (1, 1) ]
@@ -24,6 +24,6 @@ import Verify exposing (Validator)
 notEmpty : error -> Validator error (Set a) (Set a)
 notEmpty error input =
     if Set.isEmpty input then
-        Err [ error ]
+        Err ( error, [] )
     else
         Ok input
