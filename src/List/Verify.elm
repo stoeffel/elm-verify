@@ -15,14 +15,14 @@ import Verify exposing (Validator)
     --> Err [ "error" ]
 
     notEmpty "error" [1]
-    --> Ok [1]
+    --> Ok ( 1, [] )
 
 -}
-notEmpty : error -> Validator error (List a) (List a)
+notEmpty : error -> Validator error (List a) ( a, List a )
 notEmpty error input =
     case input of
         [] ->
             Err [ error ]
 
-        _ ->
-            Ok input
+        head :: tail ->
+            Ok ( head, tail )
