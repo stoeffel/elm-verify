@@ -50,7 +50,7 @@ You can execute a `Validator` just by calling it.
     --> Ok { id = 1, firstName = "Luke", lastName = "Skywalker" }
 
     validator { id = 1, firstName = Nothing, lastName = Nothing }
-    --> Err [ "no first name", "no last name" ]
+    --> Err ( "no first name", ["no last name"])
 ```
 
 So far we've used `Validator`s from `Maybe.Verify`. There are other `Validator`s in this package, but it's also simple to write your own `Validator`.
@@ -61,5 +61,5 @@ So far we've used `Validator`s from `Maybe.Verify`. There are other `Validator`s
     if input >= 0 then
        Ok input
     else
-       Err [ error ]
+       Err ( error , [])
 ```

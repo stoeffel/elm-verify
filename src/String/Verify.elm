@@ -13,13 +13,13 @@ import Verify exposing (Validator)
 {-| Fails if a String is blank (empty or only whitespace).
 
     notBlank "error" ""
-    --> Err [ "error" ]
+    --> Err ( "error" , [])
 
 -}
 notBlank : error -> Validator error String String
 notBlank error input =
     if Regex.contains lacksNonWhitespaceChars input then
-        Err [ error ]
+        Err ( error, [] )
     else
         Ok input
 
@@ -32,7 +32,7 @@ lacksNonWhitespaceChars =
 {-| Fails if a String is smaller than a given minimum.
 
     minLength 3 "error" "ab"
-    --> Err [ "error" ]
+    --> Err ( "error" , [])
 
     minLength 3 "error" "abc"
     --> Ok "abc"
@@ -43,7 +43,7 @@ minLength min error input =
     if String.length input >= min then
         Ok input
     else
-        Err [ error ]
+        Err ( error, [] )
 
 
 {-| Fails if a String is smaller than a given maximum.
@@ -52,7 +52,7 @@ minLength min error input =
     --> Ok "abc"
 
     maxLength 3 "error" "abcd"
-    --> Err [ "error" ]
+    --> Err ( "error" , [])
 
 -}
 maxLength : Int -> error -> Validator error String String
@@ -60,13 +60,13 @@ maxLength max error input =
     if String.length input <= max then
         Ok input
     else
-        Err [ error ]
+        Err ( error, [] )
 
 
 {-| Fails if a String is not an Int. It will return the Int in the result.
 
     isInt "error" "a"
-    --> Err [ "error" ]
+    --> Err ( "error" , [])
 
     isInt "error" "42"
     --> Ok 42
@@ -74,4 +74,4 @@ maxLength max error input =
 -}
 isInt : error -> Validator error String Int
 isInt error =
-    Result.mapError (always [ error ]) << String.toInt
+    Result.mapError (always ( error, [] )) << String.toInt

@@ -27,7 +27,7 @@ The result is either:
 
 -}
 type alias Validator error input verified =
-    input -> Result (List error) verified
+    input -> Result ( error, List error ) verified
 
 
 {-| This allows you to lift any value into a validator.
@@ -45,12 +45,12 @@ ok f _ =
 {-| Allows you to create a failing Validator.
 
     fail "always fail" Nothing
-    --> Err [ "always fail" ]
+    --> Err ( "always fail" , [])
 
 -}
 fail : error -> Validator error input verified
 fail error _ =
-    Err [ error ]
+    Err ( error, [] )
 
 
 {-| Allows you to start a validation pipeline. It is a synonym for `Verify.ok`, intended to make
@@ -71,7 +71,7 @@ things clearer to read.
             |> Verify.verify .firstName (Maybe.Verify.isJust "You need to provide a first name.")
 
     validator { id = 1, firstName = Nothing }
-    --> Err [ "You need to provide a first name." ]
+    --> Err ( "You need to provide a first name." , [])
 
     validator { id = 1, firstName = Just "Stöffel" }
     --> Ok { id = 1, firstName = "Stöffel" }
@@ -93,7 +93,7 @@ validate =
             |> Verify.verify .firstName (Maybe.Verify.isJust "You need to provide a first name.")
 
     validator { firstName = Nothing }
-    --> Err [ "You need to provide a first name." ]
+    --> Err ( "You need to provide a first name." , [])
 
     validator { firstName = Just "Stöffel" }
     --> Ok "Stöffel"
@@ -121,7 +121,7 @@ verify f v1 v2 =
 
 
     validator { id = 1, firstName = Nothing }
-    --> Err [ "You need to provide a first name." ]
+    --> Err ( "You need to provide a first name." , [])
 
     validator { id = 1, firstName = Just "Stöffel" }
     --> Ok (1, "Stöffel")
@@ -147,22 +147,22 @@ This means your Validator needs access to the whole structure.
             |> Verify.verify .username (Maybe.Verify.isJust "You need to provide a username.")
             |> Verify.custom (\{level, strength} ->
                 if strength > level then
-                    Err [ "Your strength can exceed your level." ]
+                    Err ( "Your strength can exceed your level." , [])
                 else
                     Ok strength
                 )
 
 
     validator { username = Just "Ork1", level = 3, strength = 5 }
-    --> Err [ "Your strength can exceed your level." ]
+    --> Err ( "Your strength can exceed your level." , [])
 
     validator { username = Just "Ork1", level = 6, strength = 5 }
     --> Ok ("Ork1", 5)
 
     validator { username = Nothing, level = 3, strength = 5 }
-    --> Err [ "You need to provide a username."
-    -->     , "Your strength can exceed your level."
-    -->     ]
+    --> Err ( "You need to provide a username."
+    -->     , [ "Your strength can exceed your level."]
+    -->     )
 
 -}
 custom :
@@ -174,8 +174,8 @@ custom v2 v1 input =
         ( Ok r1, Ok r2 ) ->
             Ok (r1 r2)
 
-        ( Err e1, Err e2 ) ->
-            Err (e1 ++ e2)
+        ( Err ( e1, rest1 ), Err ( e2, rest2 ) ) ->
+            Err ( e1, rest1 ++ (e2 :: rest2) )
 
         ( Err e1, _ ) ->
             Err e1
@@ -191,10 +191,10 @@ custom v2 v1 input =
 
 
     validator { firstName = Nothing }
-    --> Err [ "You need to provide a first name." ]
+    --> Err ( "You need to provide a first name." , [])
 
     validator { firstName = Just "   " }
-    --> Err [  "You need to provide a none empty first name." ]
+    --> Err ( "You need to provide a none empty first name." , [])
 
     validator { firstName = Just "Stöffel" }
     --> Ok "Stöffel"
@@ -224,10 +224,10 @@ compose v2 v1 =
 
 
     validator { firstName = Nothing }
-    --> Err [ "You need to provide a first name." ]
+    --> Err ( "You need to provide a first name." , [])
 
     validator { firstName = Just "   " }
-    --> Err [  "Name is too short" ]
+    --> Err ( "Name is too short" , [])
 
     validator { firstName = Just "Stöffel" }
     --> Ok "Stöffel"
@@ -267,7 +267,7 @@ It fails if the function returns a Nothing.
 This allows you to verify a input and return a verified result of a different type.
 
     fromMaybe hasInitial "error" ""
-    --> Err [ "error" ]
+    --> Err ( "error" , [])
 
     fromMaybe hasInitial "error" "Christoph"
     --> Ok 'C'
@@ -281,4 +281,4 @@ This allows you to verify a input and return a verified result of a different ty
 -}
 fromMaybe : (input -> Maybe verified) -> error -> Validator error input verified
 fromMaybe f error =
-    f >> Result.fromMaybe [ error ]
+    f >> Result.fromMaybe ( error, [] )

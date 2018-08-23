@@ -12,7 +12,7 @@ import Verify exposing (Validator)
 {-| Fails if a Maybe is Nothing.
 
     isJust "error" Nothing
-    --> Err [ "error" ]
+    --> Err ( "error" , [])
 
 
     isJust "error" (Just 42)
@@ -21,4 +21,4 @@ import Verify exposing (Validator)
 -}
 isJust : error -> Validator error (Maybe a) a
 isJust error =
-    Result.fromMaybe [ error ]
+    Result.fromMaybe ( error, [] )
