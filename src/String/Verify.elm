@@ -1,4 +1,4 @@
-module String.Verify exposing (isInt, maxLength, minLength, notBlank)
+module String.Verify exposing (notBlank, minLength, maxLength, isInt)
 
 {-| Functions to verify properties of a String.
 
@@ -20,13 +20,16 @@ notBlank : error -> Validator error String String
 notBlank error input =
     if Regex.contains lacksNonWhitespaceChars input then
         Err ( error, [] )
+
     else
         Ok input
 
 
 lacksNonWhitespaceChars : Regex
 lacksNonWhitespaceChars =
-    Regex.regex "^\\s*$"
+    Regex.fromString "^\\s*$"
+        -- This is impossible because regex is always correct
+        |> Maybe.withDefault Regex.never
 
 
 {-| Fails if a String is smaller than a given minimum.
@@ -42,6 +45,7 @@ minLength : Int -> error -> Validator error String String
 minLength min error input =
     if String.length input >= min then
         Ok input
+
     else
         Err ( error, [] )
 
@@ -59,6 +63,7 @@ maxLength : Int -> error -> Validator error String String
 maxLength max error input =
     if String.length input <= max then
         Ok input
+
     else
         Err ( error, [] )
 
@@ -74,4 +79,4 @@ maxLength max error input =
 -}
 isInt : error -> Validator error String Int
 isInt error =
-    Result.mapError (always ( error, [] )) << String.toInt
+    String.toInt >> Result.fromMaybe ( error, [] )

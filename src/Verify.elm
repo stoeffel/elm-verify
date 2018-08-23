@@ -1,16 +1,4 @@
-module Verify
-    exposing
-        ( Validator
-        , andThen
-        , compose
-        , custom
-        , fail
-        , fromMaybe
-        , keep
-        , ok
-        , validate
-        , verify
-        )
+module Verify exposing (Validator, ok, fail, validate, verify, keep, custom, compose, andThen, fromMaybe)
 
 {-| Verify allows you to validate a model into a structure that makes forbidden states impossible.
 
