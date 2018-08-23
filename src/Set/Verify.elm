@@ -25,5 +25,6 @@ notEmpty : error -> Validator error (Set a) (Set a)
 notEmpty error input =
     if Set.isEmpty input then
         Err ( error, [] )
+
     else
         Ok input
