@@ -3,7 +3,7 @@
     "name": "stoeffel/elm-verify",
     "summary": "Validate a model into a structure that makes forbidden states impossible.",
     "license": "BSD-3-Clause",
-    "version": "4.0.0",
+    "version": "5.0.0",
     "exposed-modules": [
         "Verify",
         "Dict.Verify",
