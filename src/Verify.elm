@@ -103,7 +103,7 @@ verify f v1 v2 =
 
     validator : Validator String { a | id : Int, firstName : Maybe String } (Int, String)
     validator =
-        Verify.validate (,)
+        Verify.validate Tuple.pair
             |> Verify.keep .id
             |> Verify.verify .firstName (Maybe.Verify.isJust "You need to provide a first name.")
 
@@ -131,7 +131,7 @@ This means your Validator needs access to the whole structure.
 
     validator : Verify.Validator String { a | username : Maybe String, level: Int, strength: Int } (String, Int)
     validator =
-        Verify.validate (,)
+        Verify.validate Tuple.pair
             |> Verify.verify .username (Maybe.Verify.isJust "You need to provide a username.")
             |> Verify.custom (\{level, strength} ->
                 if strength > level then
