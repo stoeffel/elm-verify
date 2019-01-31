@@ -6,6 +6,8 @@
     "List.Verify",
     "Maybe.Verify",
     "Set.Verify",
-    "String.Verify"
+    "String.Verify",
+    "Form.Verify",
+    "Form.Field"
   ]
 }
