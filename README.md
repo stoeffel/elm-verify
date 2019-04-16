@@ -40,7 +40,7 @@ and you can verify this by using a `Json.Decode.Pipeline`-like api.
         validate VerifiedModel
             |> keep .id
             |> verify .firstName (Maybe.Verify.isJust "no first name")
-            |> verify .lastName (Maybe.Verify.isJust"no last name")
+            |> verify .lastName (Maybe.Verify.isJust "no last name")
 ```
 
 You can execute a `Validator` just by calling it.
